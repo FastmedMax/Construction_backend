@@ -40,9 +40,9 @@ def foreman(project):
     ws3 = wb.create_sheet("Список общий (Бригадир)")
 
     for stage in stages:
-        ws1.merge_cells(f"A{ws3_row}:H{ws3_row}")
-        ws2.merge_cells(f"A{ws3_row}:H{ws3_row}")
-        ws3.merge_cells(f"A{ws3_row}:H{ws3_row}")
+        ws1.merge_cells(f"A{ws3_row}:I{ws3_row}")
+        ws2.merge_cells(f"A{ws3_row}:I{ws3_row}")
+        ws3.merge_cells(f"A{ws3_row}:I{ws3_row}")
         ws1[f"A{ws3_row}"] = ws2[f"A{ws3_row}"] = ws3[f"A{ws3_row}"] = f"Этап {stage['order']}. {stage['title']}"
         ws1[f"A{ws3_row}"].alignment = Alignment(horizontal="center")
         ws2[f"A{ws3_row}"].alignment = Alignment(horizontal="center")
@@ -51,12 +51,24 @@ def foreman(project):
         ws2_row += 1
         ws3_row += 1
 
-        cells = {
-            "B": {"value": "Наименование"}, 
-            "C": {"value": "Кол-во"},
-            "D": {"value": "ед-изм"}
+        cells_work = {
+            "B": {"value": "Наименование"},
+            "C": {"value": "Описание"},
+            "D": {"value": "Кол-во"},
+            "E": {"value": "ед-изм"}
         }
-        ws1, ws1_row = insert_cells(ws1, ws1_row, cells)
+        cells = {
+            "B": {"value": "Наименование"},
+            "C": {"value": "Описание"},
+            "D": {"value": "Кол-во"},
+            "E": {"value": "ед-изм"},
+            "F": {"value": "Кол-во"},
+            "G": {"value": "доп ед-изм"},
+            "H": {"value": "Вес"},
+            "I": {"value": "Объем"}
+        }
+
+        ws1, ws1_row = insert_cells(ws1, ws1_row, cells_work)
         ws2, ws2_row = insert_cells(ws2, ws2_row, cells)
         ws3, ws3_row = insert_cells(ws3, ws3_row, cells)
 
@@ -73,6 +85,25 @@ def foreman(project):
 
             elements = construction["elements"]
             for element in elements:
+                cells_work = {
+                        "A": {
+                            "value": None,
+                            "alignment": Alignment(horizontal="right")
+                        },
+                        "B": {
+                            "value": element["title"]
+                        },
+                        "C": {
+                            "value": element["original_title"]
+                        },
+                        "D": {
+                            "value": element["count"],
+                            "alignment": Alignment(horizontal="right")
+                        },
+                        "E": {
+                            "value": element["measure"]
+                        }
+                    }
                 cells = {
                         "A": {
                             "value": None,
@@ -82,16 +113,33 @@ def foreman(project):
                             "value": element["title"]
                         },
                         "C": {
+                            "value": element["original_title"]
+                        },
+                        "D": {
                             "value": element["count"],
                             "alignment": Alignment(horizontal="right")
                         },
-                        "D": {
+                        "E": {
                             "value": element["measure"]
+                        },
+                        "F": {
+                            "value": element["count"] * element["conversion_rate"],
+                            "alignment": Alignment(horizontal="right")
+                        },
+                        "G": {
+                            "value": element["second_measure"]
+                        },
+                        "H": {
+                            "value": element["weight"]
+                        },
+                        "I": {
+                            "value": element["volume"]
                         }
                     }
+
                 if element["type"] == Element.Type.JOB:
                     cells["A"]["value"] = f"{count_construction}.{ws1_index}"
-                    ws1, ws1_row = insert_cells(ws1, ws1_row, cells)
+                    ws1, ws1_row = insert_cells(ws1, ws1_row, cells_work)
                     ws1_index += 1
                 elif element["type"] == Element.Type.MATERIAL:
                     cells["A"]["value"] = f"{count_construction}.{ws2_index}"
