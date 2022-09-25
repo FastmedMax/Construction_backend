@@ -1,6 +1,9 @@
+from typing import List
+
 import openpyxl
 from openpyxl.worksheet.worksheet import Worksheet
-from openpyxl.styles import Alignment
+from openpyxl import Workbook
+from openpyxl.styles import Alignment, PatternFill
 
 from .models import Element
 
