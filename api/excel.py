@@ -452,3 +452,19 @@ def export(elements: List[Element]):
         ws1, ws_row1 = insert_cells(ws1, ws1_row, cells)
 
     return wb
+
+def q_import(wb: Workbook):
+    ws1 = wb.active
+    elements = []
+    data = {field.column: "" for field in Element._meta.fields if field.column != "id"}
+
+    for row in ws1.iter_rows(values_only=True, min_row=2):
+        if all(v is None for v in row):
+            continue
+        for key, value in zip(data.keys(), row):
+            if not value:
+                continue
+            data[key] = value
+        elements.append(Element(**data))
+
+    return elements
