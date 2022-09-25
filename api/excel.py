@@ -10,7 +10,7 @@ from .models import Element
 
 def insert_cells(ws: Worksheet, ws_row: int, cells: dict):
     """Insert cell value on row of `ws_row`, getted by column letter from `cells`"""
-    for column in (ws.iter_cols(min_row=ws_row, min_col=1, max_col=8, max_row=ws_row)):
+    for column in (ws.iter_cols(min_row=ws_row, min_col=1, max_col=12, max_row=ws_row)):
         for cell in column:
             letter = cell.column_letter
             if not cells.get(cell.column_letter):
