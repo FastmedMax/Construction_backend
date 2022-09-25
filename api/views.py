@@ -321,6 +321,26 @@ class ElementViewSet(viewsets.GenericViewSet):
 
         return Response(status=status.HTTP_201_CREATED)
 
+    @action(
+        detail=False,
+        methods=["post"],
+        url_name="export",
+        url_path="export",
+        serializer_class=ElementSerializer,
+        permission_classes=()
+    )
+    def export(self, request):
+        ids = request.data.get("ids")
+        qs = self.get_queryset()
+        elements = qs.filter(id__in=ids).order_by("subcategory__title")
+
+        wb = export(elements)
+
+        response = HttpResponse(content=save_virtual_workbook(wb))
+        response["Content-Disposition"] = "attachment; filename=elements.xlsx"
+
+        return response
+
 
 class ConstructionViewset(viewsets.GenericViewSet):
     queryset = Construction.objects.all()
