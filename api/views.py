@@ -33,7 +33,7 @@ from . serializers import (
     ClientSerializer, ClientDetailSerializer
 )
 
-from .excel import foreman, purchaser, estimate
+from .excel import foreman, purchaser, estimate, export, q_import
 
 
 @api_view(("GET",))
