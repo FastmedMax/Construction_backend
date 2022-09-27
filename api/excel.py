@@ -437,17 +437,16 @@ def export(elements: List[Element]):
             ws1[f"C{ws1_row}"] = element.subcategory.title
             ws1_row += 1
 
-        # Пример
         cells = {
             "C": {"value": element.title},
-            "D": {"value": "Ст-ть"},
-            "E": {"value": "ед."},
-            "F": {"value": "Ст-ть"},
-            "G": {"value": "ед."},
-            "H": {"value": "Ст-ть"},
-            "I": {"value": "ед."},
-            "J": {"value": "Ст-ть"},
-            "K": {"value": "ед."},
+            "D": {"value": element.price * element.conversion_rate},
+            "E": {"value": element.measure},
+            "F": {"value": element.price},
+            "G": {"value": element.second_measure},
+            "H": {"value": element.cost * element.conversion_rate},
+            "I": {"value": element.measure},
+            "J": {"value": element.cost},
+            "K": {"value": element.second_measure},
         }
         ws1, ws_row1 = insert_cells(ws1, ws1_row, cells)
 
