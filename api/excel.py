@@ -50,15 +50,11 @@ def foreman(project):
             "D": {"value": "Кол-во"},
             "E": {"value": "ед-изм"}
         }
-        cells = {
-            "B": {"value": "Наименование"},
-            "C": {"value": "Описание"},
-            "D": {"value": "Кол-во"},
-            "E": {"value": "ед-изм"},
-            "F": {"value": "Кол-во"},
-            "G": {"value": "доп ед-изм"},
-            "H": {"value": "Вес"},
-            "I": {"value": "Объем"}
+        cells = {**cells_work,
+                "F": {"value": "Кол-во"},
+                "G": {"value": "доп ед-изм"},
+                "H": {"value": "Вес"},
+                "I": {"value": "Объем"}
         }
 
         ws1, ws1_row = insert_cells(ws1, ws1_row, cells_work)
@@ -97,24 +93,7 @@ def foreman(project):
                             "value": element["measure"]
                         }
                     }
-                cells = {
-                        "A": {
-                            "value": None,
-                            "alignment": Alignment(horizontal="right")
-                        },
-                        "B": {
-                            "value": element["title"]
-                        },
-                        "C": {
-                            "value": element["original_title"]
-                        },
-                        "D": {
-                            "value": element["count"],
-                            "alignment": Alignment(horizontal="right")
-                        },
-                        "E": {
-                            "value": element["measure"]
-                        },
+                cells = {**cells_work,
                         "F": {
                             "value": element["count"] * element["conversion_rate"],
                             "alignment": Alignment(horizontal="right")
@@ -282,7 +261,7 @@ def estimate(project):
         ws1_row += 1
         ws2_row += 1
 
-        cells_full = {
+        cells = {
             "B": {"value": "Наименование"},
             "C": {"value": "Описание"},
             "D": {"value": "Кол-во"},
@@ -291,14 +270,7 @@ def estimate(project):
             "G": {"value": "Сумма"},
             "H": {"value": "Итого"}
         }
-        cells = {
-            "B": {"value": "Наименование"},
-            "C": {"value": "Кол-во"},
-            "D": {"value": "ед-изм"},
-            "E": {"value": "Цена/ед"},
-            "F": {"value": "Сумма"},
-            "G": {"value": "Итого"}
-        }
+        cells_full = {**cells, "H": {"value": "Итого"}}
 
         ws1, ws1_row = insert_cells(ws1, ws1_row, cells_full)
         ws2, ws2_row = insert_cells(ws2, ws2_row, cells)
@@ -308,20 +280,19 @@ def estimate(project):
 
         constructions = stage["constructions"]
         for count_construction, construction in enumerate(constructions, start=1):
-            cells_full = {
-                "A": {"value": f"{count_construction}. Конструкция"},
-                "B": {"value": construction["title"]},
-                "D": {"value": construction["count"]},
-                "E": {"value": construction["measure"]},
-                "F": {"value": None},
-                "G": {"value": f"=SUM(G{ws1_row + 1}:G{ws1_row + len(construction['elements'])})"}
-            }
             cells = {
                 "A": {"value": f"{count_construction}. Конструкция"},
                 "B": {"value": construction["title"]},
                 "C": {"value": construction["count"]},
                 "D": {"value": construction["measure"]},
                 "F": {"value": None}
+            }
+            cells_full = {**cells, 
+                "C": {"value": None},
+                "D": {"value": construction["count"]},
+                "E": {"value": construction["measure"]},
+                "F": {"value": None},
+                "G": {"value": f"=SUM(G{ws1_row + 1}:G{ws1_row + len(construction['elements'])})"}
             }
 
             ws1, ws1_row = insert_cells(ws1, ws1_row, cells_full)
