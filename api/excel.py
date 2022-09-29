@@ -270,7 +270,9 @@ def estimate(project):
             "G": {"value": "Сумма"},
             "H": {"value": "Итого"}
         }
-        cells_full = {**cells, "H": {"value": "Итого"}}
+        cells_full = {**cells,
+            "H": {"value": "Итого"}
+        }
 
         ws1, ws1_row = insert_cells(ws1, ws1_row, cells_full)
         ws2, ws2_row = insert_cells(ws2, ws2_row, cells)
@@ -283,24 +285,19 @@ def estimate(project):
             cells = {
                 "A": {"value": f"{count_construction}. Конструкция"},
                 "B": {"value": construction["title"]},
-                "C": {"value": construction["count"]},
-                "D": {"value": construction["measure"]},
-                "F": {"value": None}
-            }
-            cells_full = {**cells, 
-                "C": {"value": None},
                 "D": {"value": construction["count"]},
                 "E": {"value": construction["measure"]},
-                "F": {"value": None},
+                "F": {"value": construction["price"]}
+            }
+            cells_full = {**cells,
                 "G": {"value": f"=SUM(G{ws1_row + 1}:G{ws1_row + len(construction['elements'])})"}
             }
 
             ws1, ws1_row = insert_cells(ws1, ws1_row, cells_full)
-            cells["F"]["value"] = f"=SUM(F{ws2_row + 1}:F{ws2_row + len(construction['elements'])})"
             ws2, ws2_row = insert_cells(ws2, ws2_row, cells)
 
             ws1_construction_price_cells.append(f"G{ws1_row-1}")
-            ws2_construction_price_cells.append(f"F{ws2_row-1}")
+            ws2_construction_price_cells.append(f"G{ws2_row-1}")
 
             elements_price = 0
 
@@ -336,7 +333,7 @@ def estimate(project):
 
                 elements_price += element['cost'] * element['count']
 
-            ws2[f"F{ws2_row - 1}"] = elements_price
+            ws2[f"G{ws2_row - 1}"] = elements_price
             count_construction += 1
 
         ws1, ws1_row = sum_total_price(ws1, ws1_row, ws1_construction_price_cells, "Итого")
@@ -380,26 +377,18 @@ def export(elements: List[Element]):
     ws1["K2"] = "ед"
 
     for element in elements:
-        if not current_category:
+        if not current_category or current_category != element.subcategory.title:
             current_category = element.subcategory.title
+
+            if current_category != element.subcategory.title:
+                # Add blank rows
+                ws1_row += 2
 
             ws1.merge_cells(f"C{ws1_row}:K{ws1_row}")
             ws1[f"C{ws1_row}"].fill = PatternFill(fgColor="FCE89C", fill_type = "solid")
             ws1[f"C{ws1_row}"] = element.subcategory.title
-            ws1_row += 1
 
-        elif current_category == element.subcategory.title:
-            ws1_row += 1
-
-        elif current_category != element.subcategory.title:
-            # Next subcategory
-            current_category = element.subcategory.title
-            ws1_row += 2
-
-            ws1.merge_cells(f"C{ws1_row}:K{ws1_row}")
-            ws1[f"C{ws1_row}"].fill = PatternFill(fgColor="FCE89C", fill_type = "solid")
-            ws1[f"C{ws1_row}"] = element.subcategory.title
-            ws1_row += 1
+        ws1_row += 1
 
         cells = {
             "C": {"value": element.title},
@@ -412,7 +401,7 @@ def export(elements: List[Element]):
             "J": {"value": element.cost},
             "K": {"value": element.second_measure},
         }
-        ws1, ws_row1 = insert_cells(ws1, ws1_row, cells)
+        ws1, ws1_row = insert_cells(ws1, ws1_row, cells)
 
     return wb
 
