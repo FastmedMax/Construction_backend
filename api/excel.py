@@ -352,7 +352,6 @@ def estimate(project):
 def export(elements: List[Element]):
     wb = openpyxl.Workbook()
     ws1 = wb.active
-    ws1.column_dimensions(auto_size=True)
     ws1_row = 4
 
     current_category = None
@@ -378,11 +377,11 @@ def export(elements: List[Element]):
 
     for element in elements:
         if not current_category or current_category != element.subcategory.title:
-            current_category = element.subcategory.title
-
-            if current_category != element.subcategory.title:
+            if current_category:
                 # Add blank rows
                 ws1_row += 2
+
+            current_category = element.subcategory.title
 
             ws1.merge_cells(f"C{ws1_row}:K{ws1_row}")
             ws1[f"C{ws1_row}"].fill = PatternFill(fgColor="FCE89C", fill_type = "solid")
@@ -401,7 +400,7 @@ def export(elements: List[Element]):
             "J": {"value": element.cost},
             "K": {"value": element.second_measure},
         }
-        ws1, ws1_row = insert_cells(ws1, ws1_row, cells)
+        ws1, _ = insert_cells(ws1, ws1_row, cells)
 
     return wb
 

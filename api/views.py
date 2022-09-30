@@ -336,7 +336,7 @@ class ElementViewSet(viewsets.GenericViewSet):
 
         wb = export(elements)
 
-        response = HttpResponse(content=save_virtual_workbook(wb))
+        response = HttpResponse(content=save_virtual_workbook(wb), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
         response["Content-Disposition"] = "attachment; filename=elements.xlsx"
 
         return response
